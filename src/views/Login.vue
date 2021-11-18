@@ -13,7 +13,7 @@
 
       <el-form-item prop="code">
         <el-input type="text" v-model.trim="form.code" placeholder="点击图片更换验证码" autocomplete="false" style="width: 250px; margin-right: 5px"></el-input>
-        <img :src="captchaUrl" style="">
+        <img :src="captchaUrl" @click="updateCaptcha">
       </el-form-item>
 
       <el-checkbox v-model="checked" label="记住我" :indeterminate="false" class="rememberMe">记住我</el-checkbox>
@@ -35,7 +35,7 @@ export default {
   setup() {
     const loginForm = ref(null)
     const state = reactive({
-      captchaUrl: '',
+      captchaUrl: '/captcha?time=' + new Date(),
       form: {
         username: 'admin',
         password: '',
@@ -69,10 +69,16 @@ export default {
       })
     }
 
+    // 更新验证码
+    const updateCaptcha = () => {
+      state.captchaUrl = '/captcha?time' + new Date()
+    }
+
     return {
       ...toRefs(state),
       loginForm,
       submitLogin,
+      updateCaptcha,
     }
   }
 }
@@ -95,5 +101,9 @@ export default {
   .rememberMe {
     text-align: left;
     margin: 0 0 15px 0;
+  }
+  .el-form-item_content {
+    display: flex;
+    align-items: center;
   }
 </style>
