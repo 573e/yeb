@@ -1,18 +1,18 @@
 <template>
   <div>
-    <el-form :model="form" ref="form" :rules="rules" :inline="false" size="normal" class="loginContainer">
+    <el-form :model="form" ref="loginForm" :rules="rules" :inline="false" size="normal" class="loginContainer">
       <h3 class="loginTitle">系统登陆</h3>
 
       <el-form-item prop="username">
-        <el-input type="text" v-model="form.username" placeholder="请输入用户名" autocomplete="false"></el-input>
+        <el-input type="text" v-model.trim="form.username" placeholder="请输入用户名" autocomplete="false"></el-input>
       </el-form-item>
 
       <el-form-item prop="password">
-        <el-input type="password" v-model="form.password" placeholder="请输入密码" autocomplete="false"></el-input>
+        <el-input type="password" v-model.trim="form.password" placeholder="请输入密码" autocomplete="false"></el-input>
       </el-form-item>
 
       <el-form-item prop="code">
-        <el-input type="text" v-model="form.code" placeholder="点击图片更换验证码" autocomplete="false" style="width: 250px; margin-right: 5px"></el-input>
+        <el-input type="text" v-model.trim="form.code" placeholder="点击图片更换验证码" autocomplete="false" style="width: 250px; margin-right: 5px"></el-input>
         <img :src="captchaUrl" style="">
       </el-form-item>
 
@@ -28,29 +28,29 @@
 
 <script>
 import { ElMessage } from 'element-plus'
+import { reactive, toRefs, ref } from '@vue/reactivity'
 
 export default {
   name: "Login",
-  data() {
-    return {
+  setup() {
+    const loginForm = ref(null)
+    const state = reactive({
       captchaUrl: '',
       form: {
-        username: '',
-        password: '123456',
-        code: 'sfv3'
+        username: 'admin',
+        password: '',
+        code: 'aiu3',
       },
       checked: true,
       // 校验规则
       rules: {
-        username: [{required:true, message:'请输入用户名！', trigger:'blur'}],
-        password: [{required:true, message:'请输入密码！', trigger:'blur'}],
-        code: [{required:true, message:'请输入验证码！', trigger:'blur'}]
-      }
-    }
-  },
-  setup() {
+        username: [{required: true, message:'请输入用户名！', trigger: 'blur'}],
+        password: [{required: true, message:'请输入密码！', trigger: 'blur'}],
+        code: [{required: true, message:'请输入验证码！', trigger: 'blur'}]
+      },
+    })
     const submitLogin = () => {
-      this.$refs.form.validate((valid) => {
+      loginForm.value.validate((valid) => {
         if (valid) {
           ElMessage({
             showClose: true,
@@ -66,7 +66,13 @@ export default {
             center: true,
           })
         }
-      });
+      })
+    }
+
+    return {
+      ...toRefs(state),
+      loginForm,
+      submitLogin,
     }
   }
 }
